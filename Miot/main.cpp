@@ -229,10 +229,10 @@ void printTimingReport(const std::string& planName, const OptimizationResult& re
         for (const auto& lane : p.laneMetrics) {
             std::string laneDisplayName = "  -- " + lane.name;
             std::cout << std::left << std::setw(24) << laneDisplayName << " | "
-                      << std::right << std::setw(9) << "-" << " | "
+                      << std::right << std::setw(9) << "" << " | " // Left blank for lane rows
                       << std::setprecision(2) << std::setw(9) << lane.vcRatio << " | "
                       << std::setprecision(1) << std::setw(9) << lane.avgDelaySec << " | "
-                      << std::setw(10) << lane.avgQueueVeh << std::endl;
+                      << std::setprecision(1) << std::setw(10) << lane.avgQueueVeh << std::endl;
         }
     }
     std::cout << "========================================================\n" << std::endl;
@@ -304,7 +304,7 @@ void runUnitTests(const TrafficSignalOptimizer& optimizer) {
     assert(resOver.cycleLengthSec == 180.0); // Max cycle length cap
     assert(resOver.isOversaturated == true);
 
-// Test 3: Input Range Bounds Validation Logic
+    // Test 3: Input Range Bounds Validation Logic
     double minVal = 10.0, maxVal = 300.0;
     auto isValid = [](double val, double min, double max) {
         return val >= min && val <= max;
@@ -326,25 +326,25 @@ int main() {
 
     double maxWaitTarget = 60.0;
 
-    // Phase Configuration 1: Realistic Peak Demand Period (Sum Y ≈ 0.85)
-std::vector<SignalPhase> peakPhases = {
-    {"Phase 1: Main St Thru/Right", {
-        {"NB Thru/Right", 800.0, 1900.0}, // Y1 = 0.421
-        {"SB Thru/Right", 780.0, 1900.0}
-    }},
-    {"Phase 2: Main St Left Turn", {
-        {"NB Left", 180.0, 1700.0},       // Y2 = 0.106
-        {"SB Left", 160.0, 1700.0}
-    }},
-    {"Phase 3: Side St Thru/Right", {
-        {"EB Thru/Right", 400.0, 1800.0}, // Y3 = 0.222
-        {"WB Thru/Right", 380.0, 1800.0}
-    }},
-    {"Phase 4: Side St Left Turn", {
-        {"EB Left", 150.0, 1600.0},       // Y4 = 0.094
-        {"WB Left", 140.0, 1600.0}
-    }}
-};
+    // Phase Configuration 1: Realistic Peak Demand Period (Sum Y ≈ 0.843)
+    std::vector<SignalPhase> peakPhases = {
+        {"Phase 1: Main St Thru/Right", {
+            {"NB Thru/Right", 800.0, 1900.0}, // Y1 = 0.421
+            {"SB Thru/Right", 780.0, 1900.0}
+        }},
+        {"Phase 2: Main St Left Turn", {
+            {"NB Left", 180.0, 1700.0},       // Y2 = 0.106
+            {"SB Left", 160.0, 1700.0}
+        }},
+        {"Phase 3: Side St Thru/Right", {
+            {"EB Thru/Right", 400.0, 1800.0}, // Y3 = 0.222
+            {"WB Thru/Right", 380.0, 1800.0}
+        }},
+        {"Phase 4: Side St Left Turn", {
+            {"EB Left", 150.0, 1600.0},       // Y4 = 0.094
+            {"WB Left", 140.0, 1600.0}
+        }}
+    };
 
     // Phase Configuration 2: Off-Peak Period (~50% Reduction)
     std::vector<SignalPhase> offPeakPhases = {
@@ -390,6 +390,7 @@ std::vector<SignalPhase> peakPhases = {
     if (std::cin >> choice && (choice == 'y' || choice == 'Y')) {
         runInteractiveMode(optimizer);
     }
+    std::cout << std::endl; // Clean output trailing newline
 
     return 0;
 }
